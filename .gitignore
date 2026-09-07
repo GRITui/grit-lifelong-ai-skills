@@ -1,0 +1,22 @@
+# Home-directory repo: deny everything by default, allowlist only repo files.
+# This prevents accidental commits of private data (.ssh, .claude.json, .Trash, ...).
+/*
+
+# --- Repo scaffolding (tracked) ---
+!/.gitignore
+!/CLAUDE.md
+!/.clinerules
+!/.agent-harness/
+!/.agent-memory/
+!/.opencode/
+/.opencode/*
+!/.opencode/instructions.md
+
+# --- Workspace files (allowlisted for visibility, kept LOCAL-ONLY: public repo) ---
+!/AGENTS.md
+!/MEMORY.md
+!/TOOLS.md
+!/memory/
+
+# --- Noise ---
+.DS_Store
