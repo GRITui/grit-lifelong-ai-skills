@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRIT Ops Dashboard</title>
+<style>
+:root{
+  --bg:#0d1017;
+  --panel:#161b26;
+  --card:#1d2432;
+  --border:#303a4d;
+  --text:#f2f5fa;
+  --muted:#aab4c8;
+  --accent:#5b96ff;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 28px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:20px;letter-spacing:.02em;white-space:nowrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:12.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.chip b{color:var(--text);font-weight:700}
+.controls{display:flex;align-items:center;gap:16px}
+label.auto{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:9px 20px;font-size:15px;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(1.12)}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.tabs{display:flex;gap:6px;padding:10px 28px 0;border-bottom:1px solid var(--border)}
+.tab{background:none;border:0;border-bottom:2.5px solid transparent;color:var(--muted);font-size:15.5px;font-weight:600;padding:10px 16px;margin-bottom:-1px;cursor:pointer}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.panel{display:none}
+.panel.active{display:block}
+.board{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:18px;padding:26px 28px;align-items:start}
+.board.is-empty{display:block}
+@media(max-width:1200px){.board{grid-template-columns:repeat(2,minmax(240px,1fr))}}
+@media(max-width:680px){.board{grid-template-columns:1fr}}
+.column{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
+.column.over{border-color:var(--accent);background:rgba(91,150,255,.08)}
+.col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.col-title{font-size:12.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.col-count{font-family:var(--mono);font-size:12.5px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+.col-body{display:flex;flex-direction:column;gap:10px;min-height:100px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px;cursor:grab;transition:border-color .15s,transform .15s,box-shadow .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.card.dragging{opacity:.4}
+.card-title{font-size:15px;font-weight:500;line-height:1.45}
+.card.done-card .card-title{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(170,180,200,.5)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11.5px;color:var(--accent);background:rgba(91,150,255,.13);border:1px solid rgba(91,150,255,.4);border-radius:999px;padding:2px 10px;margin-top:9px}
+.empty{padding:56px 28px;text-align:center;color:var(--muted);font-size:15px}
+.empty b{display:block;font-size:17px;color:var(--text);margin-bottom:8px}
+.lib{padding:26px 28px}
+.search{width:100%;max-width:460px;background:var(--card);border:1px solid var(--border);border-radius:9px;color:var(--text);padding:10px 14px;font-size:15px;margin-bottom:20px}
+.search::placeholder{color:var(--muted)}
+.search:focus{outline:none;border-color:var(--accent)}
+details.topic{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:14px}
+details.topic summary{display:flex;align-items:center;gap:12px;padding:14px 18px;font-size:15.5px;font-weight:700;cursor:pointer;list-style:none}
+details.topic summary::-webkit-details-marker{display:none}
+details.topic summary::after{content:"+";margin-left:auto;font-family:var(--mono);color:var(--muted);font-size:18px}
+details.topic[open] summary::after{content:"\2013"}
+.file-row{display:grid;grid-template-columns:minmax(240px,1.6fr) minmax(180px,1fr) 200px 90px;gap:14px;align-items:center;padding:12px 18px;border-top:1px solid var(--border)}
+.file-link{color:var(--accent);text-decoration:none;font-size:15px;font-weight:600;cursor:pointer}
+.file-link:hover{text-decoration:underline}
+.file-name{font-family:var(--mono);font-size:12px;color:var(--muted);word-break:break-all}
+.file-meta{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+@media(max-width:900px){.file-row{grid-template-columns:1fr;gap:3px}.file-meta{white-space:normal}}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,10px);background:#212a3a;border:1px solid var(--border);border-radius:11px;padding:12px 22px;font-size:14.5px;box-shadow:0 10px 28px rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* ---- reader overlay ---- */
+.backdrop{position:fixed;inset:0;background:rgba(5,8,14,.6);opacity:0;pointer-events:none;transition:opacity .2s;z-index:90}
+.backdrop.show{opacity:1;pointer-events:auto}
+.reader{position:fixed;top:0;right:0;height:100%;width:min(760px,94vw);background:#12161f;border-left:1px solid var(--border);z-index:100;transform:translateX(102%);transition:transform .22s ease;display:flex;flex-direction:column;box-shadow:-18px 0 48px rgba(0,0,0,.5)}
+.reader.show{transform:translateX(0)}
+.reader-head{display:flex;align-items:center;gap:14px;padding:16px 26px;border-bottom:1px solid var(--border)}
+.reader-head h2{margin:0;font-size:17px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reader-body{overflow-y:auto;padding:26px 32px 60px;font-size:15.5px;line-height:1.7}
+.reader-body.loading{color:var(--muted)}
+.reader-body h1{font-size:24px;margin:22px 0 12px}
+.reader-body h2{font-size:20px;margin:22px 0 10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.reader-body h3{font-size:17px;margin:18px 0 8px}
+.reader-body h4{font-size:15.5px;margin:16px 0 6px}
+.reader-body p{margin:10px 0}
+.reader-body a{color:var(--accent)}
+.reader-body ul,.reader-body ol{margin:10px 0;padding-left:26px}
+.reader-body li{margin:5px 0}
+.reader-body blockquote{margin:12px 0;padding:8px 16px;border-left:3px solid var(--accent);background:rgba(91,150,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+.reader-body code{font-family:var(--mono);font-size:.88em;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+.reader-body pre{background:#0a0d13;border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto}
+.reader-body pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.55}
+.reader-body hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>GRIT Ops Dashboard</h1>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="controls">
+    <label class="auto"><input type="checkbox" id="autoRefresh">auto-refresh 120s</label>
+    <button class="btn" id="refreshBtn" type="button">Refresh</button>
+  </div>
+</header>
+<nav class="tabs">
+  <button class="tab active" type="button" data-tab="kanban">Kanban</button>
+  <button class="tab" type="button" data-tab="library">Knowledge Library</button>
+</nav>
+<main>
+  <section class="panel active" id="panel-kanban"><div class="board" id="board"></div></section>
+  <section class="panel" id="panel-library">
+    <div class="lib">
+      <input class="search" id="libSearch" type="text" placeholder="Search title, name, topic&hellip;">
+      <div id="libList"></div>
+    </div>
+  </section>
+</main>
+<div class="backdrop" id="backdrop"></div>
+<aside class="reader" id="reader" aria-hidden="true">
+  <div class="reader-head">
+    <h2 id="readerTitle"></h2>
+    <button class="btn ghost" id="readerClose" type="button">Close</button>
+  </div>
+  <div class="reader-body" id="readerBody"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+<script src="data.js"></script>
+<script>
+(function(){
+  var data = (typeof window.DASHBOARD_DATA === "undefined") ? null : window.DASHBOARD_DATA;
+  var board = (data && data.board) || null;
+  var library = (data && Array.isArray(data.library)) ? data.library : [];
+  var chipsEl = document.getElementById("chips");
+  var boardEl = document.getElementById("board");
+  var libListEl = document.getElementById("libList");
+  var searchEl = document.getElementById("libSearch");
+  var toastEl = document.getElementById("toast");
+  var refreshBtn = document.getElementById("refreshBtn");
+  var autoEl = document.getElementById("autoRefresh");
+  var readerEl = document.getElementById("reader");
+  var readerBody = document.getElementById("readerBody");
+  var readerTitle = document.getElementById("readerTitle");
+  var backdropEl = document.getElementById("backdrop");
+  var WEBHOOK = "/api/kanban-move";
+  var dragId = null;
+  var toastTimer = null;
+  var autoTimer = null;
+
+  function esc(v){
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2800);
+  }
+
+  function relTime(iso){
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso == null ? "" : iso);
+    var s = Math.max(0, (Date.now() - d.getTime()) / 1000);
+    if (s < 90) return "just now";
+    if (s < 5400) return Math.round(s/60) + " min ago";
+    if (s < 129600) return Math.round(s/3600) + " h ago";
+    return Math.round(s/86400) + " d ago";
+  }
+
+  function renderStats(){
+    var chips = [];
+    if (board && Array.isArray(board.columns)) {
+      var cards = board.cards || [];
+      board.columns.forEach(function(col){
+        var n = 0;
+        cards.forEach(function(c){ if (c.column === col.id) n++; });
+        chips.push('<span class="chip">' + esc(col.title) + ' <b>' + n + '</b></span>');
+      });
+    } else {
+      chips.push('<span class="chip">no board data</span>');
+    }
+    var topicSet = {};
+    ((board && board.cards) || []).forEach(function(c){ if (c.topic) topicSet[c.topic] = 1; });
+    library.forEach(function(g){ if (g && g.topic) topicSet[g.topic] = 1; });
+    var topicCount = 0;
+    for (var k in topicSet) topicCount++;
+    var fileCount = 0;
+    library.forEach(function(g){ fileCount += (g.files || []).length; });
+    chips.push('<span class="chip"># topics <b>' + topicCount + '</b></span>');
+    chips.push('<span class="chip"># files <b>' + fileCount + '</b></span>');
+    if (data && data.generatedAt) {
+      chips.push('<span class="chip">generated ' + esc(relTime(data.generatedAt)) + '</span>');
+    }
+    chipsEl.innerHTML = chips.join("");
+  }
+
+  function renderBoard(){
+    if (!board || !Array.isArray(board.columns)) {
+      boardEl.className = "board is-empty";
+      boardEl.innerHTML = '<div class="empty"><b>Waiting for first n8n run&hellip;</b><br>Board data will appear here automatically once the updater workflow writes data.js.</div>';
+      return;
+    }
+    boardEl.className = "board";
+    var cards = board.cards || [];
+    var html = "";
+    board.columns.forEach(function(col){
+      var body = "";
+      var count = 0;
+      cards.forEach(function(c){
+        if (c.column !== col.id) return;
+        count++;
+        body += '<div class="card' + (col.id === "done" ? " done-card" : "") + '" draggable="true" data-id="' + esc(c.id) + '">' +
+          '<div class="card-title">' + esc(c.title) + '</div>' +
+          (c.topic ? '<span class="tag">' + esc(c.topic) + '</span>' : "") +
+          '</div>';
+      });
+      html += '<div class="column" data-col="' + esc(col.id) + '">' +
+        '<div class="col-head"><span class="col-title">' + esc(col.title) + '</span>' +
+        '<span class="col-count">' + count + '</span></div>' +
+        '<div class="col-body">' + body + '</div></div>';
+    });
+    boardEl.innerHTML = html;
+  }
+
+  function clearOver(){
+    boardEl.querySelectorAll(".column.over").forEach(function(el){ el.classList.remove("over"); });
+  }
+
+  function clearDragging(){
+    boardEl.querySelectorAll(".card.dragging").forEach(function(el){ el.classList.remove("dragging"); });
+  }
+
+  boardEl.addEventListener("dragstart", function(e){
+    var card = e.target.closest ? e.target.closest(".card") : null;
+    if (!card) return;
+    dragId = card.getAttribute("data-id");
+    e.dataTransfer.setData("text/plain", dragId);
+    e.dataTransfer.effectAllowed = "move";
+    card.classList.add("dragging");
+  });
+
+  boardEl.addEventListener("dragend", function(){
+    dragId = null;
+    clearOver();
+    clearDragging();
+  });
+
+  boardEl.addEventListener("dragover", function(e){
+    var col = e.target.closest ? e.target.closest(".column") : null;
+    if (!col) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    col.classList.add("over");
+  });
+
+  boardEl.addEventListener("dragleave", function(e){
+    var col = e.target.closest ? e.target.closest(".column") : null;
+    if (col && (!e.relatedTarget || !col.contains(e.relatedTarget))) col.classList.remove("over");
+  });
+
+  boardEl.addEventListener("drop", function(e){
+    var col = e.target.closest ? e.target.closest(".column") : null;
+    if (!col) return;
+    e.preventDefault();
+    var id = dragId || e.dataTransfer.getData("text/plain");
+    clearOver();
+    clearDragging();
+    dragId = null;
+    if (id) moveCard(id, col.getAttribute("data-col"));
+  });
+
+  function moveCard(cardId, toColumn){
+    if (!board || !Array.isArray(board.cards)) return;
+    var card = null;
+    for (var i = 0; i < board.cards.length; i++) {
+      if (board.cards[i].id === cardId) { card = board.cards[i]; break; }
+    }
+    if (!card || card.column === toColumn) return;
+    var fromColumn = card.column;
+    function revert(){
+      card.column = fromColumn;
+      renderBoard();
+      renderStats();
+      toast("Server unreachable — move not saved");
+    }
+    card.column = toColumn;
+    renderBoard();
+    renderStats();
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", WEBHOOK, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.timeout = 6000;
+    xhr.onload = function(){
+      if (xhr.status >= 200 && xhr.status < 300) {
+        toast("Saved — regenerating data.js");
+        setTimeout(function(){ location.reload(); }, 1200);
+      } else {
+        revert();
+      }
+    };
+    xhr.onerror = revert;
+    xhr.ontimeout = revert;
+    xhr.send(JSON.stringify({ cardId: cardId, column: toColumn }));
+  }
+
+  function fmtSize(bytes){
+    var n = Number(bytes);
+    if (!isFinite(n) || n < 0) return "–";
+    if (n < 1024) return n + " B";
+    var units = ["KB", "MB", "GB", "TB"];
+    var u = -1;
+    do { n /= 1024; u++; } while (n >= 1024 && u < units.length - 1);
+    return (n >= 10 ? Math.round(n) : n.toFixed(1)) + " " + units[u];
+  }
+
+  function fmtTime(mtime){
+    var d = new Date(mtime);
+    if (isNaN(d.getTime())) return String(mtime == null ? "" : mtime);
+    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) + " " +
+      d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+  }
+
+  /* minimal markdown → html (headings, lists, code, quotes, hr, emphasis, links) */
+  function mdToHtml(src){
+    var out = [];
+    var listStack = [];
+    var inCode = false;
+    function closeLists(){
+      while (listStack.length) out.push(listStack.pop() === "ol" ? "</ol>" : "</ul>");
+    }
+    function inline(s){
+      s = esc(s);
+      s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+      s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      s = s.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+      s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      return s;
+    }
+    src.split(/\r?\n/).forEach(function(l){
+      if (/^```/.test(l)) {
+        if (inCode) { out.push("</code></pre>"); inCode = false; }
+        else { closeLists(); out.push("<pre><code>"); inCode = true; }
+        return;
+      }
+      if (inCode) { out.push(esc(l)); return; }
+      var h = l.match(/^(#{1,4})\s+(.*)/);
+      if (h) { closeLists(); out.push("<h" + h[1].length + ">" + inline(h[2]) + "</h" + h[1].length + ">"); return; }
+      if (/^(-{3,}|\*{3,})\s*$/.test(l)) { closeLists(); out.push("<hr>"); return; }
+      var bq = l.match(/^>\s?(.*)/);
+      if (bq) { closeLists(); out.push("<blockquote>" + inline(bq[1]) + "</blockquote>"); return; }
+      var ul = l.match(/^\s*[-*+]\s+(.*)/);
+      if (ul) {
+        if (listStack[listStack.length - 1] !== "ul") { closeLists(); listStack.push("ul"); out.push("<ul>"); }
+        out.push("<li>" + inline(ul[1]) + "</li>");
+        return;
+      }
+      var ol = l.match(/^\s*\d+[.)]\s+(.*)/);
+      if (ol) {
+        if (listStack[listStack.length - 1] !== "ol") { closeLists(); listStack.push("ol"); out.push("<ol>"); }
+        out.push("<li>" + inline(ol[1]) + "</li>");
+        return;
+      }
+      if (!l.trim()) { closeLists(); return; }
+      closeLists();
+      out.push("<p>" + inline(l) + "</p>");
+    });
+    closeLists();
+    if (inCode) out.push("</code></pre>");
+    return out.join("\n");
+  }
+
+  function openReader(topic, file, title){
+    readerTitle.textContent = title || file;
+    readerBody.className = "reader-body loading";
+    readerBody.textContent = "Loading " + file + " …";
+    readerEl.classList.add("show");
+    readerEl.setAttribute("aria-hidden", "false");
+    backdropEl.classList.add("show");
+    var url = "/mem/" + encodeURIComponent(topic) + "/" + encodeURIComponent(file);
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onload = function(){
+      if (xhr.status >= 200 && xhr.status < 300) {
+        readerBody.className = "reader-body";
+        readerBody.innerHTML = mdToHtml(xhr.responseText);
+        readerBody.scrollTop = 0;
+      } else {
+        readerBody.className = "reader-body";
+        readerBody.innerHTML = '<p>Could not load <code>' + esc(file) + '</code> (HTTP ' + xhr.status + ').</p>';
+      }
+    };
+    xhr.onerror = function(){
+      readerBody.className = "reader-body";
+      readerBody.innerHTML = "<p>Network error — is the dashboard server running?</p>";
+    };
+    xhr.send();
+  }
+
+  function closeReader(){
+    readerEl.classList.remove("show");
+    readerEl.setAttribute("aria-hidden", "true");
+    backdropEl.classList.remove("show");
+  }
+
+  document.getElementById("readerClose").addEventListener("click", closeReader);
+  backdropEl.addEventListener("click", closeReader);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeReader(); });
+
+  function renderLibrary(){
+    var q = (searchEl.value || "").trim().toLowerCase();
+    if (!library.length) {
+      libListEl.innerHTML = '<div class="empty"><b>Library is empty</b><br>n8n will index knowledge files into data.js.</div>';
+      return;
+    }
+    var html = "";
+    var any = false;
+    library.forEach(function(group){
+      if (!group) return;
+      var topic = group.topic || "untitled";
+      var files = (group.files || []).filter(function(f){
+        if (!q) return true;
+        var hay = ((f && f.title) || "") + " " + ((f && f.name) || "") + " " + topic;
+        return hay.toLowerCase().indexOf(q) !== -1;
+      });
+      if (!files.length) return;
+      any = true;
+      var rows = "";
+      files.forEach(function(f){
+        if (!f) return;
+        var name = f.name || "";
+        var href = "/mem/" + encodeURIComponent(topic) + "/" + encodeURIComponent(name);
+        rows += '<div class="file-row">' +
+          '<a class="file-link" data-topic="' + esc(topic) + '" data-file="' + esc(name) + '" data-title="' + esc(f.title || name) + '" href="' + esc(href) + '">' + esc(f.title || name || "(untitled)") + '</a>' +
+          '<span class="file-name">' + esc(name) + '</span>' +
+          '<span class="file-meta">' + esc(fmtTime(f.mtime)) + '</span>' +
+          '<span class="file-meta">' + esc(fmtSize(f.bytes)) + '</span>' +
+          '</div>';
+      });
+      html += '<details class="topic" open><summary>' + esc(topic) +
+        '<span class="col-count">' + files.length + '</span></summary>' + rows + '</details>';
+    });
+    libListEl.innerHTML = any ? html : '<div class="empty">No files match your search.</div>';
+  }
+
+  libListEl.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest(".file-link") : null;
+    if (!a) return;
+    e.preventDefault();
+    openReader(a.getAttribute("data-topic"), a.getAttribute("data-file"), a.getAttribute("data-title"));
+  });
+
+  function activateTab(name){
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.classList.toggle("active", t.getAttribute("data-tab") === name);
+    });
+    document.querySelectorAll(".panel").forEach(function(p){
+      p.classList.toggle("active", p.id === "panel-" + name);
+    });
+  }
+
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.addEventListener("click", function(){ activateTab(t.getAttribute("data-tab")); });
+  });
+
+  refreshBtn.addEventListener("click", function(){ location.reload(); });
+
+  autoEl.addEventListener("change", function(){
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    if (autoEl.checked) autoTimer = setInterval(function(){ location.reload(); }, 120000);
+  });
+
+  searchEl.addEventListener("input", renderLibrary);
+
+  renderStats();
+  renderBoard();
+  renderLibrary();
+})();
+</script>
+</body>
+</html>

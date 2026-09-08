@@ -46,6 +46,19 @@ freely as new domains arise (`skills`, `library`, `automation`, `architecture`,
 `debugging`, `domain-rules`, `api-notes`, ...). Never force work into an
 existing topic; never maintain a rigid fixed list.
 
+## Operating Model — PO + Swarms
+
+The main session acts as **Product Owner (PO)** only. It delegates legwork to
+parallel swarm subagents; it never merges unverified work.
+
+- **Research swarms** write drafts to `.agent-memory/inbox/` (never to `topics/`).
+- **Build swarms** write only to their assigned output directory.
+- **PO QA gate** verifies each deliverable (sources present, claims spot-checked,
+  build artifacts tested with exit 0) BEFORE moving knowledge into
+  `.agent-memory/topics/<topic>/` or marking board cards `done`.
+- Board source of truth: `.agent-dashboard/board.json`; n8n regenerates
+  `.agent-dashboard/data.js` autonomously.
+
 ## Repo Layout
 
 - `.agent-harness/INSTRUCTIONS.md` — this file (canonical).

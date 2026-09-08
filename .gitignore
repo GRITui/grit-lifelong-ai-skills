@@ -8,6 +8,11 @@
 !/.clinerules
 !/.agent-harness/
 !/.agent-memory/
+!/.agent-dashboard/
+# generated/native artifacts inside the dashboard dir — never tracked
+/.agent-dashboard/data.js
+/.agent-dashboard/src/dashboard-server
+/.agent-dashboard/src/*.log
 !/.opencode/
 /.opencode/*
 !/.opencode/instructions.md

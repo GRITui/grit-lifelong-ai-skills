@@ -1,0 +1,87 @@
+{
+  "cards" : [
+    {
+      "column" : "backlog",
+      "updated" : "2026-09-07T16:19:20Z",
+      "topic" : "automation-workflow",
+      "id" : "c1",
+      "title" : "Push scaffolding to origin (grit-lifelong-ai-skills)"
+    },
+    {
+      "updated" : "2026-09-07T16:28:24Z",
+      "column" : "done",
+      "id" : "c2",
+      "topic" : "software-development",
+      "title" : "Local dashboard: kanban + knowledge library"
+    },
+    {
+      "updated" : "2026-09-07T16:28:25Z",
+      "column" : "done",
+      "title" : "n8n autonomous updater (schedule + webhook)",
+      "topic" : "automation-workflow",
+      "id" : "c3"
+    },
+    {
+      "topic" : "ai-vibe-coding",
+      "title" : "Research swarm batch #1 (4 focus areas)",
+      "updated" : "2026-09-07T16:28:27Z",
+      "id" : "c4",
+      "column" : "done"
+    },
+    {
+      "updated" : "2026-09-07T16:25:21Z",
+      "column" : "backlog",
+      "topic" : "software-development",
+      "id" : "c5",
+      "title" : "Commit dashboard + research batch #1"
+    },
+    {
+      "column" : "done",
+      "topic" : "ai-vibe-coding",
+      "updated" : "2026-09-08T01:30:01Z",
+      "title" : "PO: pick next research batch",
+      "id" : "c6"
+    },
+    {
+      "updated" : "2026-09-07T16:28:28Z",
+      "title" : "Native Swift dashboard engine + n8n control-plane integration",
+      "column" : "done",
+      "topic" : "software-development",
+      "id" : "c7"
+    },
+    {
+      "updated" : "2026-09-07T00:00:00Z",
+      "topic" : "automation-workflow",
+      "id" : "c8",
+      "title" : "Pad watchdog: independent probe node (USB\/adb)",
+      "column" : "done"
+    },
+    {
+      "title" : "Equip chakrit skills: fact-check, lowfat-pantry, kien-thai, kode-thai",
+      "topic" : "ai-vibe-coding",
+      "id" : "c9",
+      "column" : "done",
+      "updated" : "2026-09-07T16:41:54Z"
+    }
+  ],
+  "columns" : [
+    {
+      "id" : "backlog",
+      "title" : "Backlog"
+    },
+    {
+      "id" : "in-progress",
+      "title" : "In Progress"
+    },
+    {
+      "id" : "qa-gate",
+      "title" : "QA Gate"
+    },
+    {
+      "id" : "done",
+      "title" : "Done"
+    }
+  ],
+  "version" : 1,
+  "updated" : "2026-09-08T01:30:01Z"
+}
