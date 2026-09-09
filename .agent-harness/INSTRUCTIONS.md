@@ -59,6 +59,13 @@ parallel swarm subagents; it never merges unverified work.
 - Board source of truth: `.agent-dashboard/board.json`; n8n regenerates
   `.agent-dashboard/data.js` autonomously.
 
+## Skill Pipeline
+
+See `.agent-harness/skills-pipeline.md`. New skills: request card → swarm draft in
+`.agent-memory/skills-inbox/` → PO audit → equip. **Skills are on-demand**: never
+preload a SKILL.md body; match tasks by description and invoke the skill tool only
+when executing that procedure.
+
 ## Repo Layout
 
 - `.agent-harness/INSTRUCTIONS.md` — this file (canonical).
