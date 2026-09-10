@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""usage: script-handoff-brief --name "<descriptive name>" (--file <summary.md> | --stdin) [--cwd <dir>]
+
+Distilled tool from mattpocock/skills in-progress/claude-handoff.
+Sources: /Users/grit/ops/vendor/mattpocock/skills/skills/in-progress/claude-handoff/SKILL.md, /Users/grit/ops/vendor/mattpocock/skills/skills/productivity/handoff/SKILL.md
+
+Spawn a fresh background agent seeded with a handoff summary as its prompt.
+The summary must already follow handoff-brief/SKILL.md structure and be redacted.
+
+Exit codes:
+  0  agent spawned
+  1  usage error (missing/unknown args)
+  2  summary empty or too short to be a handoff
+  3  claude CLI not found on PATH
+  4  spawn command failed
+  5  likely secret detected in summary: redact first (see handoff-brief skill)
+"""
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+
+SECRET_PATTERNS = [
+    r"sk-[A-Za-z0-9]{16,}",
+    r"gh[pousr]_[A-Za-z0-9]{20,}",
+    r"AKIA[0-9A-Z]{16}",
+    r"xox[baprs]-[A-Za-z0-9-]{10,}",
+    r"-----BEGIN [A-Z ]*PRIVATE KEY-----",
+    r"(?i)bearer\s+[A-Za-z0-9._-]{20,}",
+    r"(?i)password\s*[:=]\s*\S+",
+]
+
+def main() -> int:
+    p = argparse.ArgumentParser(add_help=False)
+    p.add_argument("--name", required=True)
+    p.add_argument("--file")
+    p.add_argument("--stdin", action="store_true")
+    p.add_argument("--cwd")
+    try:
+        args = p.parse_args()
+    except SystemExit:
+        return 1
+    if bool(args.file) == args.stdin:
+        print("error: exactly one of --file or --stdin is required", file=sys.stderr)
+        return 1
+
+    if args.stdin:
+        summary = sys.stdin.read()
+    else:
+        try:
+            with open(args.file, encoding="utf-8") as f:
+                summary = f.read()
+        except OSError as e:
+            print(f"error: cannot read summary: {e}", file=sys.stderr)
+            return 2
+
+    summary = summary.strip()
+    if len(summary) < 200 or summary.count("\n") < 4:
+        print("error: summary too short to be a handoff (need >=200 chars, >=4 lines)", file=sys.stderr)
+        return 2
+
+    for pat in SECRET_PATTERNS:
+        if re.search(pat, summary):
+            print(f"error: secret pattern matched ({pat}); redact before spawning", file=sys.stderr)
+            return 5
+
+    if shutil.which("claude") is None:
+        print("error: claude CLI not found on PATH", file=sys.stderr)
+        return 3
+
+    cmd = ["claude", "--bg", "--name", args.name, summary]
+    try:
+        r = subprocess.run(cmd, cwd=args.cwd or os.getcwd(), check=False)
+    except OSError as e:
+        print(f"error: spawn failed: {e}", file=sys.stderr)
+        return 4
+    if r.returncode != 0:
+        print(f"error: spawn exited {r.returncode}; inspect with: claude agents", file=sys.stderr)
+        return 4
+    print(f"spawned: claude --bg --name {args.name!r}; manage with: claude agents")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

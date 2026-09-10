@@ -1,0 +1,30 @@
+#!/bin/sh
+# qa-gate — deterministic QA gate runner  (pipeline T; distilled from qa-gate skill
+# + software-development research, sources: .agent-harness/tools provenance)
+# Usage: qa-gate [--git] <file-or-dir-target...>
+#   per-target: bash -n (.sh) / python -m py_compile (.py) / existence (other)
+#   --git adds repo hygiene: tracked-but-ignored files, outside-pointing symlinks
+# Exit 0 = all gates pass. 1 = any failure (listed on stdout). 2 = usage.
+[ $# -ge 1 ] || { echo "usage: qa-gate [--git] <target...>"; exit 2; }
+gitmode=0; fail=0; targets=""
+for a in "$@"; do
+  if [ "$a" = "--git" ]; then gitmode=1; else targets="$targets $a"; fi
+done
+[ -n "$targets" ] || { echo "qa-gate: no targets"; exit 2; }
+for f in $targets; do
+  case "$f" in
+    *.sh) sh -n "$f" 2>&1 || { echo "FAIL bash-n: $f"; fail=1; } ;;
+    *.py) python3 -m py_compile "$f" 2>&1 || { echo "FAIL py: $f"; fail=1; } ;;
+    *) [ -f "$f" ] || { echo "FAIL missing: $f"; fail=1; } ;;
+  esac
+done
+if [ $gitmode -eq 1 ] && command -v git >/dev/null && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  ignored=$(git ls-files -c -i --exclude-standard | head -5)
+  [ -z "$ignored" ] || { echo "FAIL tracked-but-ignored: $ignored"; fail=1; }
+  for l in $(git ls-files -s | awk '$1=="120000"{print $4}'); do
+    case "$l" in /*|*..*) echo "FAIL outside-symlink: $l"; fail=1 ;; esac
+    [ -e "/Users/grit/$l" ] || [ -e "$l" ] || { echo "FAIL dangling-symlink: $l"; fail=1; }
+  done
+fi
+[ $fail -eq 0 ] && echo "QA GATE: PASS"
+exit $fail

@@ -1,0 +1,20 @@
+#!/bin/sh
+# n8n-health — local n8n 2.x health probe  (pipeline T; distilled from n8n-troubleshoot
+# skill knowledge, sources: .agent-harness/tools provenance + EQA-gated ops knowledge)
+# Checks: /health 200, single process holding :5678 (orphan detection),
+# kanban-move webhook registered in DB, latest execution status.
+# Exit 0 healthy · 1 degraded (failures listed).
+fail=0
+H=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://localhost:5678/health)
+[ "$H" = "200" ] && echo "health: OK (200)" || { echo "health: FAIL ($H)"; fail=1; }
+HOLDERS=$(pgrep -fl 'n8n start' | wc -l | tr -d ' ')
+[ "$HOLDERS" = "1" ] && echo "process: single" || { echo "process: $HOLDERS n8n procs (orphan risk)"; fail=1; }
+NODES=$(sqlite3 ~/.n8n/database.sqlite "SELECT COUNT(*) FROM workflow_entity WHERE id='dShb0ardUpd8r1' AND active=1;" 2>/dev/null)
+[ "$NODES" = "1" ] && echo "updater workflow: active" || { echo "updater workflow: NOT active"; fail=1; }
+WEB=$(sqlite3 ~/.n8n/database.sqlite "SELECT COUNT(*) FROM webhook_entity WHERE webhookPath='kanban-move';" 2>/dev/null)
+[ "$WEB" -ge 1 ] 2>/dev/null && echo "webhook: registered" || { echo "webhook: missing row"; fail=1; }
+EX=$(sqlite3 ~/.n8n/database.sqlite "SELECT status FROM execution_entity ORDER BY id DESC LIMIT 1;" 2>/dev/null)
+echo "last exec: ${EX:-none}"
+[ "$EX" = "success" ] || [ "$EX" = "running" ] || { echo "exec: degraded"; fail=1; }
+[ $fail -eq 0 ] && echo "N8N: HEALTHY"
+exit $fail

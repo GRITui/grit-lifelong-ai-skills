@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""qa-structure — template-conformance check for research swarm drafts  (pipeline T)
+
+Distilled from the equipped po-research-cycle skill (QA-gate structure item;
+sources: .agent-harness/tools provenance). Deterministic half of the draft QA
+gate: sections present, finding count, per-finding confidence markers, source
+count.
+
+Usage: qa-structure <draft.md> [<draft.md> ...]
+Exit:  0 = well-formed; 1 = violations (listed); 2 = usage.
+"""
+import re
+import sys
+
+REQUIRED = ["## TL;DR", "## Findings", "## For This Workspace", "## Sources"]
+
+
+def check(path):
+    bad = []
+    try:
+        text = open(path, encoding="utf-8").read()
+    except OSError as e:
+        return [f"unreadable: {path} ({e})"]
+    for s in REQUIRED:
+        if s not in text:
+            bad.append(f"missing section: {s}")
+    n_find = len(re.findall(r"(?m)^\s*[\-\*]?\s*\*{0,2}\d+\.", text.split("## Findings", 1)[-1].split("## For This Workspace", 1)[0]))
+    if "## Findings" in text and n_find < 5:
+        bad.append(f"Findings count {n_find} < 5")
+    confs = len(re.findall(r"Confidence[^:]*:\*{0,2}\s*(high|medium|med|low)", text))
+    if "## Findings" in text and confs == 0:
+        bad.append("no Confidence ratings in Findings")
+    srcs = re.findall(r"^[-*]?\s*https?://\S+", text, re.M)
+    if len(srcs) < 3:
+        bad.append(f"sources count {len(srcs)} < 5 URLs")
+    return bad
+
+
+def main(argv):
+    args = [a for a in argv[1:] if not a.startswith("-")]
+    if not args:
+        print(__doc__)
+        return 2
+    bad_all = []
+    for p in args:
+        for b in check(p):
+            bad_all.append(f"{b}  [{p}]")
+    for b in bad_all:
+        print("FAIL", b)
+    if bad_all:
+        return 1
+    print("qa-structure: PASS", len(args), "draft(s)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

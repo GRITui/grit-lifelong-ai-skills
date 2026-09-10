@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""board — kanban API client for the local Swift dashboard engine  (pipeline T)
+
+Distilled 2026-09-10 from the QA-gated automation-workflow knowledge (sources:
+.agent-harness/skills-pipeline.md, topics/automation-workflow/2026-09-08-n8n-failure-analysis.md).
+Replaces hand-typed curl sequences for: card moves, library reindex.
+
+Usage:
+  board move <cardId> <column>     # move card + regenerate data.js + print state
+  board refresh                    # reindex library into data.js
+  board list                       # print cards grouped by column
+Exit: 0 on HTTP 2xx + ok:true, 1 otherwise.
+"""
+import json
+import sys
+import urllib.request
+
+BASE = "http://127.0.0.1:8787"
+BOARD = "/Users/grit/.agent-dashboard/board.json"
+
+
+def post(path, body=None):
+    req = urllib.request.Request(BASE + path, method="POST")
+    req.add_header("Content-Type", "application/json")
+    data = json.dumps(body).encode() if body else b"{}"
+    with urllib.request.urlopen(req, data, timeout=10) as r:
+        return json.loads(r.read().decode())
+
+
+def main(argv):
+    if len(argv) >= 2 and argv[1] == "move" and len(argv) == 4:
+        res = post("/api/kanban-move", {"cardId": argv[2], "column": argv[3]})
+    elif len(argv) == 2 and argv[1] == "refresh":
+        res = post("/api/refresh")
+    elif len(argv) == 2 and argv[1] == "list":
+        b = json.load(open(BOARD))
+        for c in b["columns"]:
+            cards = [x for x in b["cards"] if x["column"] == c["id"]]
+            print(f"{c['title']} ({len(cards)}): " + ", ".join(f"{x['id']}:{x['title']}" for x in cards))
+        return 0
+    else:
+        print(__doc__)
+        return 1
+    if not res.get("ok"):
+        print("board: api error", res, file=sys.stderr)
+        return 1
+    print(json.dumps(res))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

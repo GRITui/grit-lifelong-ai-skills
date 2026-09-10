@@ -1,0 +1,121 @@
+name: ai-qa-gate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  agent-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout (PR head, read-only analysis)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Deterministic gates (always)
+        id: deterministic
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -o pipefail
+          FAILS=()
+          CHANGED_MD=$(git diff --name-only "origin/${GITHUB_BASE_REF:-main}...HEAD" 2>/dev/null | grep '\.md$' || true)
+          for f in $CHANGED_MD; do
+            [ -f "$f" ] || continue
+            python3 .agent-harness/tools/qa-structure "$f" || FAILS+=("$f: structure")
+          done
+          sh .agent-harness/tools/qa-gate --git .agent-harness/tools/* || FAILS+=("tools-gate")
+          if [ ${#FAILS[@]} -gt 0 ]; then
+            printf '%s\n' "${FAILS[@]}" | tee /tmp/deterministic-fails
+            echo "status=FAIL" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=pass" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: AI agent gate (LLM review, read-only tools)
+        id: ai
+        env:
+          OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          NUM: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          if [ -z "$OAUTH" ]; then
+            echo "::notice::CLAUDE_CODE_OAUTH_TOKEN secret not set — AI gate skipped"
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          npm install -g @anthropic-ai/claude-code
+          if [ "$EVENT" = "issues" ]; then
+            gh issue view "$NUM" > /tmp/gate-input.md || true
+            gh issue view "$NUM" --comments >> /tmp/gate-input.md || true
+          else
+            gh pr diff "$NUM" > /tmp/gate-input.md || true
+          fi
+          printf '\n---EVENT---\n%s\n---NUMBER---\n%s\n' "$EVENT" "$NUM" >> /tmp/gate-input.md
+          PROMPT_BODY=$(cat .github/ai-qa-gate-prompt.md /tmp/gate-input.md)
+          set +e
+          OUT=$(echo "$PROMPT_BODY" | claude -p \
+            --permission-mode default \
+            --allowedTools "Read,Glob,Grep,Bash(git log:*),Bash(git diff*),WebSearch,WebFetch,TodoWrite" \
+            --max-turns 30 2>&1)
+          RC=$?
+          set -e
+          { echo "$OUT"; } > /tmp/ai-verdict.txt || true
+          if echo "$OUT" | tail -20 | grep -q "GATE-VERDICT: PASS"; then
+            echo "status=pass" >> "$GITHUB_OUTPUT"
+          elif echo "$OUT" | tail -20 | grep -q "GATE-VERDICT: FAIL"; then
+            echo "status=FAIL" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=unverifiable" >> "$GITHUB_OUTPUT"
+          fi
+          echo "$OUT" > /tmp/ai-gate-full.txt
+          [ $RC -le 1 ] || exit $RC
+
+      - name: Post gate report
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          NUM: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          {
+            echo "## 🤖 AI QA Gate"
+            echo ""
+            echo "**Deterministic:** \`${{ steps.deterministic.outputs.status || 'n/a' }}\` · **AI agent:** \`${{ steps.ai.outputs.status }}\`"
+            echo ""
+            if [ -f /tmp/ai-verdict.txt ]; then
+              echo '<details><summary>AI gate report</summary>'
+              echo ""
+              echo '```'
+              tail -60 /tmp/ai-verdict.txt
+              echo '```'
+              echo '</details>'
+            fi
+          } > /tmp/report.md
+          if [ "$EVENT" = "issues" ]; then
+            gh issue comment "$NUM" --body-file /tmp/report.md
+          else
+            gh pr comment "$NUM" --body-file /tmp/report.md
+          fi
+          case "${{ steps.ai.outputs.status }}:${{ steps.deterministic.outputs.status }}" in
+            *FAIL*:*|*pass:FAIL*|"FAIL":*) exit 1 ;;
+            *FAIL:*) exit 1 ;;
+            pass:pass|"skipped":*|"pass":*) exit 0 ;;
+            *:*) exit 0 ;;
+          esac

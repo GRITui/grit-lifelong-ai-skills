@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""a11y-probe — static accessibility probe for agent-built HTML  (pipeline T)
+
+Distilled from the equipped a11y-audit skill knowledge (sources:
+.agent-harness/tools provenance, ux-ui-agent-skills vendor). Runs the
+DETERMINISTIC subset; criterion judgment stays in the skill.
+
+Usage: a11y-probe <file.html>[ <file.html>...]
+Exit:  0 = clean; 1 = findings; 2 = usage error.
+Checks: viewport meta present, html lang present, img alt/hidden, input
+label/aria-label, inline font-size < 11px, absolute-CDN scripts (dashboards
+must be CDN-free), tabindex > 0.
+"""
+import os
+import re
+import sys
+
+CHECKS = [
+    ("missing-meta-viewport", r"<meta[^>]+view", "must-exist"),
+    ("missing-html-lang",     r"<html[^>]*\blang\s*=", "must-exist"),
+    ("img-missing-alt",       r"<img(?![^>]*\b[^>]*\balt\s*=)[^>]*>", "count"),
+    ("input-unlabeled",       r"<input(?![^>]*aria-label)[^>]*>", "count"),
+    ("tiny-font-px",          r"font-size:\s*([0-9](?:\.[0-9]+)?px|10px)", "count"),
+    ("cdn-script",            r"<script[^>]+src=[\"']https?://", "count"),
+    ("tabindex-positive",     r"tabindex\s*=\s*[\"']?[1-9]", "count"),
+]
+
+
+def probe(path):
+    findings = []
+    if not os.path.isfile(path):
+        return [(("missing-file", path, 0), "")]
+    text = open(path, encoding="utf-8", errors="ignore").read()
+    for name, pat, mode in CHECKS:
+        ms = list(re.finditer(pat, text, re.I))
+        if mode == "must-exist" and not ms:
+            findings.append(((name, path, 0), "required but absent"))
+        for m in ms:
+            if mode == "must-exist" and not ms:
+                break  # handled above
+            if mode == "must-exist":
+                break
+            line = text[: m.start()].count("\n") + 1
+            findings.append(((name, path, line), ""))
+    return findings
+
+
+def main(argv):
+    if len(argv) < 2 or any(a in ("-h", "--help") for a in argv[1:]):
+        print(__doc__)
+        return 2
+    all_f = []
+    for p in argv[1:]:
+        all_f += probe(p)
+    for (name, path, line), note in all_f:
+        loc = f"line {line}" if line else "-"
+        extra = f" {note}" if note else ""
+        print(f"FIND {name}: {path} ({loc}){extra}")
+    if all_f:
+        print(f"a11y-probe: {len(all_f)} finding(s) → judgment: use a11y-audit skill")
+        return 1
+    print(f"a11y-probe: clean ({len(argv) - 1} file(s))")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

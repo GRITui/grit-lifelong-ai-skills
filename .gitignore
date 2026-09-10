@@ -17,6 +17,14 @@
 /.opencode/*
 !/.opencode/instructions.md
 
+# --- CI/AI QA gate (tracked) ---
+!/.github/
+/.github/*
+!/.github/workflows/
+/.github/workflows/*
+!/.github/workflows/ai-qa-gate.yml
+!/.github/ai-qa-gate-prompt.md
+
 # --- Workspace files (allowlisted for visibility, kept LOCAL-ONLY: public repo) ---
 !/AGENTS.md
 !/MEMORY.md
