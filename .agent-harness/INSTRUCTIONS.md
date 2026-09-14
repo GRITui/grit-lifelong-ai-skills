@@ -66,20 +66,28 @@ The main session acts as **Product Owner (PO)** only. It delegates legwork to
 parallel swarm subagents; it never merges unverified work.
 
 **Every delegated run is bound by `.agent-harness/DELEGATION-CONTRACT.md`:**
-minimum tools for the task shape (researcher/builder/auditor/ops/designer/
-delegator), one declared write directory, call budget, and a mandatory
-exit-code check before reporting success. Grants are temporary — per run —
-and never widened by the sub-agent.
+minimum tools for the task shape — the software-house roster (researcher/
+builder/auditor/ops/designer/writer/delegator), one declared write directory,
+call budget, and a mandatory exit-code check before reporting success. Each
+role's grant is fitted to what that role actually does (Research Analyst,
+Software Engineer, QA Engineer, DevOps/SRE, Product Designer, Technical
+Writer, Engineering Manager). Grants are temporary — per run — and never
+widened by the sub-agent; a role that genuinely needs a tool outside its lane
+uses **Global Tool Escalation** (report the gap to the PO) instead of
+reaching for it itself.
 
 - **Research swarms** write drafts to `.agent-memory/inbox/` (never to `topics/`).
 - **Build swarms** write only to their assigned output directory.
 - **Design swarms** (`designer`) write specs/copy/token proposals only to their
   assigned output directory — never implementation code.
+- **Writer swarms** (`writer`) write docs/handoffs/changelogs only to their
+  assigned docs directory, citing only material already verified in-repo —
+  never original research or implementation code.
 - **`delegator`** is the one profile the PO may hand a multi-part brief to
   instead of decomposing it itself: it is the only persona holding `Task`, so
-  it can fan a brief out to researcher/builder/auditor/ops/designer directly.
-  It never writes files itself and must never spawn another `delegator` — the
-  PO stays the only place nesting can start from.
+  it can fan a brief out to researcher/builder/auditor/ops/designer/writer
+  directly. It never writes files itself and must never spawn another
+  `delegator` — the PO stays the only place nesting can start from.
 - **PO QA gate** verifies each deliverable (sources present, claims spot-checked,
   build artifacts tested with exit 0) BEFORE moving knowledge into
   `.agent-memory/topics/<topic>/` or marking board cards `done`.
