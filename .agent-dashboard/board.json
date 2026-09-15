@@ -1,182 +1,4 @@
 {
-  "cards" : [
-    {
-      "column" : "done",
-      "title" : "Push scaffolding to origin (grit-lifelong-ai-skills)",
-      "updated" : "2026-09-12T22:50:00Z",
-      "id" : "c1",
-      "topic" : "automation-workflow"
-    },
-    {
-      "topic" : "software-development",
-      "updated" : "2026-09-15T02:30:00Z",
-      "title" : "Sprint 09-12 · Commit unshipped work: Skills\/Tools tab (c14 code), DELEGATION-CONTRACT, SKILLS-INDEX, INSTRUCTIONS\/skills-pipeline edits, 09-08..09-12 research digests, deleted n8n-swift topic",
-      "column" : "done",
-      "id" : "c18"
-    },
-    {
-      "column" : "done",
-      "topic" : "automation-workflow",
-      "id" : "c23",
-      "updated" : "2026-09-15T02:30:00Z",
-      "title" : "Sprint 09-15 · Tool drift (T6 candidate): tools\/board points at stale \/Users\/grit\/.agent-dashboard\/board.json (path no longer exists; board now at repo .agent-dashboard\/board.json) — repoint or retire"
-    },
-    {
-      "id" : "c24",
-      "title" : "Sprint 09-15 · Dashboard server drift: running binary is a stale build at \/Users\/grit\/.agent-dashboard\/src\/dashboard-server (started 09-13, compiled against old board path) — kanban-move\/refresh return precondition-fail; rebuild from repo .agent-dashboard\/src\/dashboard-server.swift and restart on :8787",
-      "updated" : "2026-09-15T11:54:46Z",
-      "topic" : "automation-workflow",
-      "column" : "done"
-    },
-    {
-      "column" : "backlog",
-      "id" : "c25",
-      "updated" : "2026-09-15T11:53:00Z",
-      "topic" : "automation-workflow",
-      "title" : "Sprint 09-15 · launchd plist drift: com.grit.dashboard-server ProgramArguments points at deleted \/Users\/grit\/.agent-dashboard\/src\/dashboard-server (job loops exit 78); server now running manually from repo binary. Repoint plist to repo .agent-dashboard\/src\/dashboard-server (+ log paths), launchctl kickstart -k. Requires write outside repo (~\/Library\/LaunchAgents) — USER\/PO action"
-    },
-    {
-      "title" : "Sprint 09-15 · Tool drift (pre-existing, flagged at c24 gate): absolute \/Users\/grit paths in .agent-harness\/tools\/qa-gate:26, build_tokens_css.py:30 (DEFAULT_TOKENS), script-handoff-brief:5 (sources comment) — repo is public; derive from env\/relative paths or document as host-pinned",
-      "topic" : "automation-workflow",
-      "updated" : "2026-09-15T12:44:51Z",
-      "id" : "c26",
-      "column" : "done"
-    },
-    {
-      "topic" : "automation-workflow",
-      "id" : "c19",
-      "column" : "backlog",
-      "title" : "Sprint 09-12 · Fix mcpo crash loop — USER: activate n8n MCP workflow c583a1a7 in UI (localhost:5678), then verify newnew-mcpo stays up; optional N8N_API_KEY for API toggles",
-      "updated" : "2026-09-12T22:50:00Z"
-    },
-    {
-      "topic" : "studies",
-      "column" : "done",
-      "updated" : "2026-09-14T12:05:32Z",
-      "title" : "Sprint 09-12 · Re-run rejected 09-12 software-dev research: SWE-bench Pro claim stale (~23% → leaderboard now 61.5±3.1%); re-verify vs current data, resubmit, PO gate",
-      "id" : "c20"
-    },
-    {
-      "topic" : "automation-workflow",
-      "column" : "backlog",
-      "id" : "c21",
-      "updated" : "2026-09-12T22:50:00Z",
-      "title" : "Sprint 09-12 · USER action batch: kill -9 96838 (CF desktop cloudflared) · gh secret set CLAUDE_CODE_OAUTH_TOKEN + branch protection on main · approve resume→Hostinger deploy · domain decision for stable tunnel URL"
-    },
-    {
-      "column" : "done",
-      "title" : "Sprint 09-12 · Research batch #next — pick area after c20 re-run lands (candidates: verification-tax measurement, agent governance post-incident, Terminal-Bench\/Frontier-SWE)",
-      "updated" : "2026-09-14T23:18:21Z",
-      "id" : "c22",
-      "topic" : "ai-vibe-coding"
-    },
-    {
-      "id" : "c2",
-      "title" : "Local dashboard: kanban + knowledge library",
-      "updated" : "2026-09-07T16:28:24Z",
-      "topic" : "software-development",
-      "column" : "done"
-    },
-    {
-      "title" : "n8n autonomous updater (schedule + webhook)",
-      "column" : "done",
-      "updated" : "2026-09-07T16:28:25Z",
-      "id" : "c3",
-      "topic" : "automation-workflow"
-    },
-    {
-      "id" : "c4",
-      "topic" : "ai-vibe-coding",
-      "column" : "done",
-      "title" : "Research swarm batch #1 (4 focus areas)",
-      "updated" : "2026-09-07T16:28:27Z"
-    },
-    {
-      "title" : "Commit dashboard + research batch #1",
-      "topic" : "software-development",
-      "column" : "done",
-      "id" : "c5",
-      "updated" : "2026-09-08T02:10:15Z"
-    },
-    {
-      "id" : "c6",
-      "topic" : "ai-vibe-coding",
-      "column" : "done",
-      "updated" : "2026-09-08T01:30:01Z",
-      "title" : "PO: pick next research batch"
-    },
-    {
-      "updated" : "2026-09-07T16:28:28Z",
-      "id" : "c7",
-      "title" : "Native Swift dashboard engine + n8n control-plane integration",
-      "topic" : "software-development",
-      "column" : "done"
-    },
-    {
-      "id" : "c8",
-      "column" : "done",
-      "updated" : "2026-09-07T00:00:00Z",
-      "topic" : "automation-workflow",
-      "title" : "Pad watchdog: independent probe node (USB\/adb)"
-    },
-    {
-      "column" : "done",
-      "title" : "Equip chakrit skills: fact-check, lowfat-pantry, kien-thai, kode-thai",
-      "updated" : "2026-09-07T16:41:54Z",
-      "topic" : "ai-vibe-coding",
-      "id" : "c9"
-    },
-    {
-      "topic" : "swift-apple-silicon",
-      "column" : "done",
-      "id" : "c11",
-      "updated" : "2026-09-10T17:52:37Z",
-      "title" : "Research: Swift on Apple Silicon for agent tooling (new topic)"
-    },
-    {
-      "column" : "done",
-      "title" : "Skill delegation pipeline v1 + distill research into 4 skills",
-      "topic" : "skills",
-      "updated" : "2026-09-09T14:45:58Z",
-      "id" : "c12"
-    },
-    {
-      "title" : "Vendor+digest mattpocock (skills\/sandcastle\/evalite) for distilling",
-      "updated" : "2026-09-09T00:00:00Z",
-      "id" : "c13",
-      "column" : "done",
-      "topic" : "studies"
-    },
-    {
-      "id" : "c14",
-      "column" : "done",
-      "topic" : "software-development",
-      "updated" : "2026-09-10T00:00:00Z",
-      "title" : "Dashboard: Skills + Tools tabs in data.js contract"
-    },
-    {
-      "id" : "c15",
-      "column" : "done",
-      "topic" : "skills",
-      "updated" : "2026-09-09T19:15:31Z",
-      "title" : "Distill batch: 5 vendor skills + 2 retype tools + library audit fixes (index per-SKILL, T5 drift, audit stamps)"
-    },
-    {
-      "id" : "c16",
-      "updated" : "2026-09-10T16:10:45Z",
-      "column" : "done",
-      "topic" : "skills",
-      "title" : "ux-ui-agent-skills vendor: token-build tool + a11y-audit + design-review skills (gated\/equipped)"
-    },
-    {
-      "title" : "Re-type batch: a11y-probe + qa-structure tools (T1-T3 built, audited, red-first-tested)",
-      "topic" : "skills",
-      "updated" : "2026-09-10T16:17:03Z",
-      "id" : "c17",
-      "column" : "done"
-    }
-  ],
-  "updated" : "2026-09-15T12:44:51Z",
   "version" : 1,
   "columns" : [
     {
@@ -194,6 +16,191 @@
     {
       "id" : "done",
       "title" : "Done"
+    }
+  ],
+  "updated" : "2026-09-15T16:43:08Z",
+  "cards" : [
+    {
+      "id" : "c1",
+      "column" : "done",
+      "topic" : "automation-workflow",
+      "updated" : "2026-09-12T22:50:00Z",
+      "title" : "Push scaffolding to origin (grit-lifelong-ai-skills)"
+    },
+    {
+      "id" : "c18",
+      "column" : "done",
+      "updated" : "2026-09-15T02:30:00Z",
+      "topic" : "software-development",
+      "title" : "Sprint 09-12 · Commit unshipped work: Skills\/Tools tab (c14 code), DELEGATION-CONTRACT, SKILLS-INDEX, INSTRUCTIONS\/skills-pipeline edits, 09-08..09-12 research digests, deleted n8n-swift topic"
+    },
+    {
+      "title" : "Sprint 09-15 · Tool drift (T6 candidate): tools\/board points at stale \/Users\/grit\/.agent-dashboard\/board.json (path no longer exists; board now at repo .agent-dashboard\/board.json) — repoint or retire",
+      "updated" : "2026-09-15T02:30:00Z",
+      "id" : "c23",
+      "column" : "done",
+      "topic" : "automation-workflow"
+    },
+    {
+      "column" : "done",
+      "title" : "Sprint 09-15 · Dashboard server drift: running binary is a stale build at \/Users\/grit\/.agent-dashboard\/src\/dashboard-server (started 09-13, compiled against old board path) — kanban-move\/refresh return precondition-fail; rebuild from repo .agent-dashboard\/src\/dashboard-server.swift and restart on :8787",
+      "topic" : "automation-workflow",
+      "id" : "c24",
+      "updated" : "2026-09-15T11:54:46Z"
+    },
+    {
+      "topic" : "automation-workflow",
+      "id" : "c25",
+      "column" : "in-progress",
+      "updated" : "2026-09-15T16:43:08Z",
+      "title" : "Sprint 09-15 · launchd plist drift: com.grit.dashboard-server ProgramArguments points at deleted home-dir binary (job loops exit 78); server running manually from repo binary. FIX STAGED (gated): tools\/fix-dashboard-launchd repoints plist + log paths to repo, bootout\/bootstrap, verifies :8787 — USER\/PO: run it (writes ~\/Library\/LaunchAgents, outside repo)"
+    },
+    {
+      "id" : "c27",
+      "column" : "backlog",
+      "topic" : "automation-workflow",
+      "updated" : "2026-09-15T16:45:00Z",
+      "title" : "Sprint 09-15 · Tool drift (flagged at c25 wave): tools\/skills-index reads ~\/.agent-harness\/tools + ~\/.agent-memory\/skills-inbox (home paths deleted) — running it now would wipe the tool\/staged sections of SKILLS-INDEX.md; derive bases from repo root (same class as c26)"
+    },
+    {
+      "column" : "done",
+      "title" : "Sprint 09-15 · Tool drift (pre-existing, flagged at c24 gate): absolute \/Users\/grit paths in .agent-harness\/tools\/qa-gate:26, build_tokens_css.py:30 (DEFAULT_TOKENS), script-handoff-brief:5 (sources comment) — repo is public; derive from env\/relative paths or document as host-pinned",
+      "topic" : "automation-workflow",
+      "updated" : "2026-09-15T12:44:51Z",
+      "id" : "c26"
+    },
+    {
+      "id" : "c19",
+      "column" : "backlog",
+      "updated" : "2026-09-12T22:50:00Z",
+      "topic" : "automation-workflow",
+      "title" : "Sprint 09-12 · Fix mcpo crash loop — USER: activate n8n MCP workflow c583a1a7 in UI (localhost:5678), then verify newnew-mcpo stays up; optional N8N_API_KEY for API toggles"
+    },
+    {
+      "updated" : "2026-09-14T12:05:32Z",
+      "id" : "c20",
+      "title" : "Sprint 09-12 · Re-run rejected 09-12 software-dev research: SWE-bench Pro claim stale (~23% → leaderboard now 61.5±3.1%); re-verify vs current data, resubmit, PO gate",
+      "topic" : "studies",
+      "column" : "done"
+    },
+    {
+      "id" : "c21",
+      "topic" : "automation-workflow",
+      "column" : "backlog",
+      "updated" : "2026-09-12T22:50:00Z",
+      "title" : "Sprint 09-12 · USER action batch: kill -9 96838 (CF desktop cloudflared) · gh secret set CLAUDE_CODE_OAUTH_TOKEN + branch protection on main · approve resume→Hostinger deploy · domain decision for stable tunnel URL"
+    },
+    {
+      "title" : "Sprint 09-12 · Research batch #next — pick area after c20 re-run lands (candidates: verification-tax measurement, agent governance post-incident, Terminal-Bench\/Frontier-SWE)",
+      "topic" : "ai-vibe-coding",
+      "column" : "done",
+      "id" : "c22",
+      "updated" : "2026-09-14T23:18:21Z"
+    },
+    {
+      "id" : "c2",
+      "column" : "done",
+      "topic" : "software-development",
+      "title" : "Local dashboard: kanban + knowledge library",
+      "updated" : "2026-09-07T16:28:24Z"
+    },
+    {
+      "title" : "n8n autonomous updater (schedule + webhook)",
+      "column" : "done",
+      "updated" : "2026-09-07T16:28:25Z",
+      "id" : "c3",
+      "topic" : "automation-workflow"
+    },
+    {
+      "id" : "c4",
+      "title" : "Research swarm batch #1 (4 focus areas)",
+      "updated" : "2026-09-07T16:28:27Z",
+      "topic" : "ai-vibe-coding",
+      "column" : "done"
+    },
+    {
+      "column" : "done",
+      "title" : "Commit dashboard + research batch #1",
+      "updated" : "2026-09-08T02:10:15Z",
+      "id" : "c5",
+      "topic" : "software-development"
+    },
+    {
+      "topic" : "ai-vibe-coding",
+      "column" : "done",
+      "id" : "c6",
+      "updated" : "2026-09-08T01:30:01Z",
+      "title" : "PO: pick next research batch"
+    },
+    {
+      "topic" : "software-development",
+      "column" : "done",
+      "updated" : "2026-09-07T16:28:28Z",
+      "title" : "Native Swift dashboard engine + n8n control-plane integration",
+      "id" : "c7"
+    },
+    {
+      "topic" : "automation-workflow",
+      "id" : "c8",
+      "column" : "done",
+      "title" : "Pad watchdog: independent probe node (USB\/adb)",
+      "updated" : "2026-09-07T00:00:00Z"
+    },
+    {
+      "column" : "done",
+      "title" : "Equip chakrit skills: fact-check, lowfat-pantry, kien-thai, kode-thai",
+      "id" : "c9",
+      "updated" : "2026-09-07T16:41:54Z",
+      "topic" : "ai-vibe-coding"
+    },
+    {
+      "column" : "done",
+      "topic" : "swift-apple-silicon",
+      "title" : "Research: Swift on Apple Silicon for agent tooling (new topic)",
+      "id" : "c11",
+      "updated" : "2026-09-10T17:52:37Z"
+    },
+    {
+      "updated" : "2026-09-09T14:45:58Z",
+      "topic" : "skills",
+      "column" : "done",
+      "title" : "Skill delegation pipeline v1 + distill research into 4 skills",
+      "id" : "c12"
+    },
+    {
+      "id" : "c13",
+      "topic" : "studies",
+      "column" : "done",
+      "updated" : "2026-09-09T00:00:00Z",
+      "title" : "Vendor+digest mattpocock (skills\/sandcastle\/evalite) for distilling"
+    },
+    {
+      "updated" : "2026-09-10T00:00:00Z",
+      "column" : "done",
+      "title" : "Dashboard: Skills + Tools tabs in data.js contract",
+      "id" : "c14",
+      "topic" : "software-development"
+    },
+    {
+      "topic" : "skills",
+      "updated" : "2026-09-09T19:15:31Z",
+      "column" : "done",
+      "id" : "c15",
+      "title" : "Distill batch: 5 vendor skills + 2 retype tools + library audit fixes (index per-SKILL, T5 drift, audit stamps)"
+    },
+    {
+      "topic" : "skills",
+      "column" : "done",
+      "updated" : "2026-09-10T16:10:45Z",
+      "title" : "ux-ui-agent-skills vendor: token-build tool + a11y-audit + design-review skills (gated\/equipped)",
+      "id" : "c16"
+    },
+    {
+      "topic" : "skills",
+      "title" : "Re-type batch: a11y-probe + qa-structure tools (T1-T3 built, audited, red-first-tested)",
+      "column" : "done",
+      "updated" : "2026-09-10T16:17:03Z",
+      "id" : "c17"
     }
   ]
 }

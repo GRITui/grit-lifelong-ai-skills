@@ -1,0 +1,53 @@
+#!/bin/sh
+# fix-dashboard-launchd — one-shot repair for com.grit.dashboard-server plist drift (c25)
+# The launchd plist pointed at the deleted home-dir copy of the binary
+# (~/.agent-dashboard/src/dashboard-server; job looped exit 78 EX_CONFIG).
+# This repoints ProgramArguments + log paths to the repo
+# binary, reloads the LaunchAgent (bootout + bootstrap, which re-reads the plist —
+# kickstart alone would keep the stale in-memory definition), and verifies :8787.
+# Host-independent: repo root derived from this script's location (tools/ -> repo root).
+# Idempotent: safe to re-run. Kills any manually-started instance first so launchd
+# owns :8787.
+# Usage: fix-dashboard-launchd
+# Exit 0 = plist repointed + job running + :8787 answers 200. 1 = failure (see output).
+set -u
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
+BINARY="$REPO_ROOT/.agent-dashboard/src/dashboard-server"
+LOG="$REPO_ROOT/.agent-dashboard/src/server.log"
+LABEL=com.grit.dashboard-server
+DOMAIN="gui/$(id -u)"
+PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
+
+[ -x "$BINARY" ] || { echo "FAIL binary missing: $BINARY"; exit 1; }
+[ -f "$PLIST" ] || { echo "FAIL plist missing: $PLIST"; exit 1; }
+
+echo "repointing $PLIST -> $BINARY"
+/usr/libexec/PlistBuddy -c "Set :ProgramArguments:0 $BINARY" "$PLIST" || exit 1
+/usr/libexec/PlistBuddy -c "Set :StandardOutPath $LOG" "$PLIST" || exit 1
+/usr/libexec/PlistBuddy -c "Set :StandardErrorPath $LOG" "$PLIST" || exit 1
+
+launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || true
+
+for p in $(pgrep -f "$BINARY" 2>/dev/null); do
+  [ "$p" = "$$" ] && continue
+  kill "$p" 2>/dev/null || true
+done
+i=0
+while [ $i -lt 20 ] && curl -s -o /dev/null -m 1 http://127.0.0.1:8787/; do
+  i=$((i+1)); sleep 0.5
+done
+if curl -s -o /dev/null -m 1 http://127.0.0.1:8787/; then
+  echo "FAIL :8787 still held after kill (check: pgrep -fl dashboard-server)"
+  exit 1
+fi
+
+launchctl bootstrap "$DOMAIN" "$PLIST" || { echo "FAIL bootstrap $DOMAIN/$LABEL"; exit 1; }
+sleep 1
+
+STATE=$(launchctl print "$DOMAIN/$LABEL" 2>/dev/null | awk -F'= ' '/state =/{print $2}')
+[ "$STATE" = "running" ] || { echo "FAIL job state: ${STATE:-unknown} (launchctl print $DOMAIN/$LABEL)"; exit 1; }
+CODE=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://127.0.0.1:8787/)
+[ "$CODE" = "200" ] || { echo "FAIL http :8787 -> $CODE"; exit 1; }
+echo "OK: $LABEL running from $BINARY (:8787 -> $CODE)"
