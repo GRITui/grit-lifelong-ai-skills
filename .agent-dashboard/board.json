@@ -18,7 +18,7 @@
     }
   ],
   "version" : 1,
-  "updated" : "2026-09-15T18:31:33Z",
+  "updated" : "2026-09-15T18:40:00Z",
   "cards" : [
     {
       "title" : "Push scaffolding to origin (grit-lifelong-ai-skills)",
@@ -85,8 +85,8 @@
     },
     {
       "column" : "in-progress",
-      "title" : "Sprint 09-12 · USER action batch (09-16: branch protection ON main — enforce_admins=true, no checks\/PRs, GET exit 0; cloudflared kill STALE; secret absent 404): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
-      "updated" : "2026-09-15T18:31:33Z",
+      "title" : "Sprint 09-12 · USER action batch (09-16 01:40 re-audit: branch protection ON main enforce_admins=true, cloudflared dead, secret list empty=absent, :8787 200 — state unchanged): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
+      "updated" : "2026-09-15T18:40:00Z",
       "topic" : "automation-workflow",
       "id" : "c21"
     },
