@@ -12,11 +12,12 @@ Usage:
 Exit: 0 on HTTP 2xx + ok:true, 1 otherwise.
 """
 import json
+import os
 import sys
 import urllib.request
 
 BASE = "http://127.0.0.1:8787"
-BOARD = "/Users/grit/.agent-dashboard/board.json"
+BOARD = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".agent-dashboard", "board.json"))
 
 
 def post(path, body=None):

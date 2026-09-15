@@ -31,14 +31,21 @@
       "topic" : "software-development",
       "id" : "c18",
       "column" : "done",
-      "updated" : "2026-09-15T01:30:00Z"
+  "updated" : "2026-09-15T02:30:00Z"
     },
     {
       "title" : "Sprint 09-15 · Tool drift (T6 candidate): tools/board points at stale /Users/grit/.agent-dashboard/board.json (path no longer exists; board now at repo .agent-dashboard/board.json) — repoint or retire",
       "topic" : "automation-workflow",
       "id" : "c23",
+      "column" : "done",
+      "updated" : "2026-09-15T02:30:00Z"
+    },
+    {
+      "title" : "Sprint 09-15 · Dashboard server drift: running binary is a stale build at /Users/grit/.agent-dashboard/src/dashboard-server (started 09-13, compiled against old board path) — kanban-move/refresh return precondition-fail; rebuild from repo .agent-dashboard/src/dashboard-server.swift and restart on :8787",
+      "topic" : "automation-workflow",
+      "id" : "c24",
       "column" : "backlog",
-      "updated" : "2026-09-15T01:30:00Z"
+      "updated" : "2026-09-15T02:30:00Z"
     },
     {
       "updated" : "2026-09-12T22:50:00Z",
