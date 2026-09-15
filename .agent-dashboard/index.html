@@ -70,6 +70,14 @@ details.topic[open] summary::after{content:"\2013"}
 @media(max-width:900px){.file-row{grid-template-columns:1fr;gap:3px}.file-meta{white-space:normal}}
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,10px);background:#212a3a;border:1px solid var(--border);border-radius:11px;padding:12px 22px;font-size:14.5px;box-shadow:0 10px 28px rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+/* ---- skills / tools tabs ---- */
+.skit-row{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 16px;margin-bottom:10px}
+.skit-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.skit-name{font-size:15px;font-weight:700;font-family:var(--mono)}
+.skit-audit{font-family:var(--mono);font-size:11px;border-radius:999px;padding:2px 9px}
+.skit-audit.pass{color:#7ce38b;border:1px solid rgba(124,227,139,.4);background:rgba(124,227,139,.08)}
+.skit-audit.na{color:#c8b170;border:1px solid rgba(200,177,112,.35);background:rgba(200,177,112,.08)}
+.skit-desc{margin-top:8px;font-size:13.5px;color:var(--muted);line-height:1.55}
 /* ---- reader overlay ---- */
 .backdrop{position:fixed;inset:0;background:rgba(5,8,14,.6);opacity:0;pointer-events:none;transition:opacity .2s;z-index:90}
 .backdrop.show{opacity:1;pointer-events:auto}
@@ -108,6 +116,8 @@ details.topic[open] summary::after{content:"\2013"}
 <nav class="tabs">
   <button class="tab active" type="button" data-tab="kanban">Kanban</button>
   <button class="tab" type="button" data-tab="library">Knowledge Library</button>
+  <button class="tab" type="button" data-tab="skills">Skills</button>
+  <button class="tab" type="button" data-tab="tools">Tools</button>
 </nav>
 <main>
   <section class="panel active" id="panel-kanban"><div class="board" id="board"></div></section>
@@ -117,6 +127,8 @@ details.topic[open] summary::after{content:"\2013"}
       <div id="libList"></div>
     </div>
   </section>
+  <section class="panel" id="panel-skills"><div class="lib"><div id="skillsList"></div></div></section>
+  <section class="panel" id="panel-tools"><div class="lib"><div id="toolsList"></div></div></section>
 </main>
 <div class="backdrop" id="backdrop"></div>
 <aside class="reader" id="reader" aria-hidden="true">
@@ -133,6 +145,8 @@ details.topic[open] summary::after{content:"\2013"}
   var data = (typeof window.DASHBOARD_DATA === "undefined") ? null : window.DASHBOARD_DATA;
   var board = (data && data.board) || null;
   var library = (data && Array.isArray(data.library)) ? data.library : [];
+  var skills = (data && Array.isArray(data.skills)) ? data.skills : [];
+  var tools = (data && Array.isArray(data.tools)) ? data.tools : [];
   var chipsEl = document.getElementById("chips");
   var boardEl = document.getElementById("board");
   var libListEl = document.getElementById("libList");
@@ -447,6 +461,33 @@ details.topic[open] summary::after{content:"\2013"}
     libListEl.innerHTML = any ? html : '<div class="empty">No files match your search.</div>';
   }
 
+  function renderSkillsTools(listId, rows, emptyTitle){
+    var el = document.getElementById(listId);
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty"><b>' + emptyTitle + '</b><br>Refresh after the next index regeneration.</div>';
+      return;
+    }
+    el.innerHTML = rows.map(function(s){
+      var auditCls = (s.audit === "AUDIT-PASS") ? "skit-audit pass" : "skit-audit na";
+      var auditTxt = s.audit ? esc(s.audit) : "";
+      return '<div class="skit-row"><div class="skit-head">' +
+        '<span class="skit-name">' + esc(s.name || "(unnamed)") + '</span>' +
+        (s.status ? '<span class="tag" style="margin-top:0">' + esc(s.status) + '</span>' : "") +
+        (s.audit ? '<span class="' + auditCls + '">' + auditTxt + '</span>' : "") +
+        '</div>' +
+        (s.trigger ? '<div class="skit-desc">' + esc(s.trigger) + '</div>' : '') +
+        '</div>';
+    }).join("");
+  }
+
+  function renderSkills(){
+    renderSkillsTools("skillsList", skills, "No skills indexed yet");
+  }
+
+  function renderTools(){
+    renderSkillsTools("toolsList", tools, "No tools equipped yet");
+  }
+
   libListEl.addEventListener("click", function(e){
     var a = e.target.closest ? e.target.closest(".file-link") : null;
     if (!a) return;
@@ -479,6 +520,8 @@ details.topic[open] summary::after{content:"\2013"}
   renderStats();
   renderBoard();
   renderLibrary();
+  renderSkills();
+  renderTools();
 })();
 </script>
 </body>
