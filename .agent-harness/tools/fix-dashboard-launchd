@@ -30,7 +30,7 @@ echo "repointing $PLIST -> $BINARY"
 
 launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || true
 
-for p in $(pgrep -f "$BINARY" 2>/dev/null); do
+for p in $(pgrep -f "agent-dashboard/src/dashboard-server" 2>/dev/null); do
   [ "$p" = "$$" ] && continue
   kill "$p" 2>/dev/null || true
 done
@@ -46,7 +46,7 @@ fi
 launchctl bootstrap "$DOMAIN" "$PLIST" || { echo "FAIL bootstrap $DOMAIN/$LABEL"; exit 1; }
 sleep 1
 
-STATE=$(launchctl print "$DOMAIN/$LABEL" 2>/dev/null | awk -F'= ' '/state =/{print $2}')
+STATE=$(launchctl print "$DOMAIN/$LABEL" 2>/dev/null | awk -F'= ' '/state =/{print $2; exit}')
 [ "$STATE" = "running" ] || { echo "FAIL job state: ${STATE:-unknown} (launchctl print $DOMAIN/$LABEL)"; exit 1; }
 CODE=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://127.0.0.1:8787/)
 [ "$CODE" = "200" ] || { echo "FAIL http :8787 -> $CODE"; exit 1; }
