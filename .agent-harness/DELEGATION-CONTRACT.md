@@ -118,13 +118,14 @@ sessions → fall back to `general` + the persona's brief block (portable floor)
 
 ## Worker model routing (verified 2026-09-15)
 
-Text-only offload workers run on the OpenAI-compatible gateway (creds in
-`~/.agent-engine/.env`: `OPENAI_BASE_URL` + `OPENAI_API_KEY` — never in repo).
-Sole free model: `qwen3.8-27b-fp8` (vLLM `Qwen/Qwen3.8-27B-FP8`, reasoning model).
+Offload workers run on OpenAI-compatible endpoints (creds in
+`~/.agent-engine/.env` / shell env — never in repo). Two pinned primaries,
+one per task class:
 
-| Class (`delegate-offload`) | Model | Floor |
-|----------------------------|-------|-------|
-| `small` / `code` / `complex` | `qwen3.8-27b-fp8` | `max_tokens` ≥ 500 — ≤20 strangles it mid-thought (`content: null`, `finish: length`) |
+| Class (`delegate-offload`) | Model (primary, not fallback) | Notes |
+|----------------------------|-------------------------------|-------|
+| `small` (docs, triage notes, boilerplate) | `cohere/north-mini-code:free` (OpenRouter: `https://openrouter.ai/api/v1`, key `OPENROUTER_API_KEY` in env) | exact-follow + `tool_calls` verified 2026-09-15, cost 0 |
+| `code` / `complex` | `qwen3.8-27b-fp8` (NineArm gateway) | `max_tokens` ≥ 500 — ≤20 strangles it mid-thought (`content: null`, `finish: length`) |
 
 Rules: worker gets prompt + inline context only (no repo access, no tools —
 `delegate-offload` §3/§4 QA gate still applies). Briefs that offload must state
