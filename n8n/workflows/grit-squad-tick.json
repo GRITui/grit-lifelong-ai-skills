@@ -1,0 +1,76 @@
+{
+  "name": "Grit Squad Tick (20m)",
+  "nodes": [
+    {
+      "id": "b2c3d4e5-0001-4000-8000-000000000001",
+      "name": "Every 20 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-160, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 20
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b2c3d4e5-0002-4000-8000-000000000002",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-160, 160],
+      "webhookId": "grit-squad-tick",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "squad-tick",
+        "responseMode": "onReceived",
+        "options": {}
+      }
+    },
+    {
+      "id": "b2c3d4e5-0003-4000-8000-000000000003",
+      "name": "Dispatch Tick",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [80, 80],
+      "parameters": {
+        "command": "export HOME=/Users/grit; export PATH=/usr/bin:/bin:/opt/homebrew/bin; nohup /bin/bash /Users/grit/repos/grit-lifelong-ai-skills/.agent-runs/tick.sh >> /Users/grit/repos/grit-lifelong-ai-skills/.agent-runs/cron.out 2>&1 & echo \"tick dispatched\"",
+        "executeOnce": true
+      }
+    }
+  ],
+  "connections": {
+    "Every 20 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Tick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Tick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "tags": []
+}
