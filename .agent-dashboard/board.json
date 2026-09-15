@@ -84,8 +84,8 @@
       "updated" : "2026-09-14T12:05:32Z"
     },
     {
-      "title" : "Sprint 09-12 · USER action batch: kill -9 96838 (CF desktop cloudflared) · gh secret set CLAUDE_CODE_OAUTH_TOKEN + branch protection on main · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
-      "updated" : "2026-09-12T22:50:00Z",
+      "title" : "Sprint 09-12 · USER action batch (09-16 audit: cloudflared kill STALE — PID 96838 gone, no cloudflared running; secret CLAUDE_CODE_OAUTH_TOKEN verified absent (404); main verified unprotected): gh secret set CLAUDE_CODE_OAUTH_TOKEN + branch protection on main · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
+      "updated" : "2026-09-15T18:20:56Z",
       "topic" : "automation-workflow",
       "id" : "c21",
       "column" : "backlog"
