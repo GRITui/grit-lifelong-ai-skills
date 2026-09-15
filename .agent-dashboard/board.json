@@ -85,8 +85,8 @@
     },
     {
       "column" : "in-progress",
-      "title" : "Sprint 09-12 · USER action batch (09-16 05:40 re-audit: state unchanged — protection ON main enforce_admins=true, no checks/PR/restrictions; secret list empty=absent; cloudflared dead; :8787 200): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
-      "updated" : "2026-09-15T22:40:00Z",
+      "title" : "Sprint 09-12 · USER action batch (09-16 06:00 re-audit: state unchanged — protection ON main enforce_admins=true, no checks/PR/restrictions; secret list empty=absent; cloudflared dead; :8787 200): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
+      "updated" : "2026-09-15T23:00:00Z",
       "topic" : "automation-workflow",
       "id" : "c21"
     },
