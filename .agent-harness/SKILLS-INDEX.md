@@ -4,6 +4,7 @@ equipped	a11y-audit	AUDIT-PASS	Use when auditing agent-built HTML dashboards or 
 equipped	agent-run-contract	AUDIT-PASS	Use when orchestrating headless agent runs (cron, batch, AFK loops) — designing completion signals, structured-output tags, iteration/timeout policy, or prompt 
 equipped	ai-engineering-loop	AUDIT-PASS	Runs one epoch cycle of a continuous multi-squad AI engineering workflow (Researcher, Engineer, QA-Tester, UX-UI-Designer squads, each led by a PM agent) in Cla
 equipped	apple-silicon-swift	AUDIT-PASS	Use when writing, compiling, or distributing Swift on this Apple Silicon (M1, CLT-only) Mac — choosing zero-dep single-file builds vs frameworks, using the Foun
+equipped	bootstrap	unaudited	Auto-initialize Framework 3.0 workspace
 equipped	canvas-design	AUDIT-PASS	Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, d
 equipped	code-review	AUDIT-PASS	Use when asked to review a diff since a fixed point (commit, branch, tag, HEAD~N), a swarm build lane's output, or a PR before merge. Two-axis review run as par
 equipped	delegate-offload	AUDIT-PASS	Assess an incoming task and, when it's well-scoped enough to delegate, offload it to a cheaper worker model (rotating across cline-pass / OpenCode Go / OpenCode
