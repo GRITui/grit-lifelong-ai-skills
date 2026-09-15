@@ -2,7 +2,7 @@
 """usage: script-handoff-brief --name "<descriptive name>" (--file <summary.md> | --stdin) [--cwd <dir>]
 
 Distilled tool from mattpocock/skills in-progress/claude-handoff.
-Sources: /Users/grit/ops/vendor/mattpocock/skills/skills/in-progress/claude-handoff/SKILL.md, /Users/grit/ops/vendor/mattpocock/skills/skills/productivity/handoff/SKILL.md
+Sources (host-pinned, relative to ~/ops/vendor): mattpocock/skills/skills/in-progress/claude-handoff/SKILL.md, mattpocock/skills/skills/productivity/handoff/SKILL.md
 
 Spawn a fresh background agent seeded with a handoff summary as its prompt.
 The summary must already follow handoff-brief/SKILL.md structure and be redacted.

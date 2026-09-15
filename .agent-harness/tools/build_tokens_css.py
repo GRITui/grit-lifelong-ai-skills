@@ -23,11 +23,15 @@ exit 1 = unresolved alias or unreadable JSON.
 """
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
-DEFAULT_TOKENS = Path("/Users/grit/ops/vendor/ux-ui-agent-skills/tokens")
+# Host-pinned vendor default; override with $TOKENS_DIR or a positional arg.
+DEFAULT_TOKENS = Path(
+    os.environ.get("TOKENS_DIR", str(Path.home() / "ops/vendor/ux-ui-agent-skills/tokens"))
+)
 ALIAS = re.compile(r"\{([^}]+)\}")
 
 
