@@ -85,8 +85,8 @@
     },
     {
       "column" : "in-progress",
-      "title" : "Sprint 09-12 · USER action batch (09-16 02:00 re-audit: state unchanged — protection ON main enforce_admins=true, secret list empty=absent, cloudflared dead, :8787 200; NEW: repo-side ai-qa-gate pipeline verified green — ai-qa-gate-prompt.md + qa-structure + qa-gate present, qa-gate --git PASS): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
-      "updated" : "2026-09-15T19:00:00Z",
+      "title" : "Sprint 09-12 · USER action batch (09-16 02:20 re-audit: state unchanged — protection ON main enforce_admins=true, force-push/delete disabled, no checks/PR/restrictions; secret list empty=absent; cloudflared dead; :8787 200; ai-qa-gate pipeline still green — .github/ai-qa-gate-prompt.md + ai-qa-gate.yml + qa-structure + qa-gate present): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
+      "updated" : "2026-09-15T19:20:00Z",
       "topic" : "automation-workflow",
       "id" : "c21"
     },
