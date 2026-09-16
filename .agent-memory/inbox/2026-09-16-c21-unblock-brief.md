@@ -1,10 +1,23 @@
 # c21 one-shot unblock brief (2026-09-16 08:30 +0700)
 
-Status probe (`.agent-harness/tools/deploy-blockers-check`, exit 1 = blocked):
+Status probe (`.agent-harness/tools/deploy-blockers-check`, exit 1 = blocked) — re-audited 09-16 20:20:
 secret ABSENT · protection main enforce_admins=true checks=0 pr=none restrictions=0 ·
-cloudflared dead · dashboard :8787 200.
+cloudflared ALIVE but MISROUTED (quick tunnel → dead :8646; dashboard is :8787) · dashboard :8787 200.
 
 All three remaining blockers are USER-side. Do them in one sitting:
+
+## 0. Interim cleanup — kill the misrouted quick tunnel (do first)
+
+A `cloudflared tunnel --url http://localhost:8646` quick tunnel is running but
+targets a dead port (:8646 → 404). It is the rejected option C and serves
+nothing useful. Kill it so it doesn't masquerade as a working tunnel:
+
+```sh
+pkill -f 'cloudflared tunnel --url http://localhost:8646'
+```
+
+(Do NOT repoint it to :8787 — option C is rejected; the stable tunnel comes
+from the domain decision in §3.)
 
 ## 1. Set the repo secret (unblocks the CI path)
 
