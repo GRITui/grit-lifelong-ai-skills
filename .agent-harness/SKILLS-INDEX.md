@@ -40,6 +40,7 @@ staged	token-build	AUDIT-PASS	Use when the local HTML/Swift dashboards need desi
 tool	a11y-probe	AUDIT-PASS	a11y-probe — static accessibility probe for agent-built HTML (pipeline T) Distilled from the equipped a11y-audit skill knowledge (sources: .agent-harness/tools 
 tool	board	AUDIT-PASS	board — kanban API client for the local Swift dashboard engine (pipeline T) Distilled 2026-09-10 from the QA-gated automation-workflow knowledge (sources: .agen
 tool	build_tokens_css.py	AUDIT-PASS	Compile DTCG token JSON -> CSS custom properties for the ops dashboards. Distilled from ops/vendor/ux-ui-agent-skills (token-build + design-tokens). Reads the v
+tool	deploy-blockers-check	AUDIT-PASS	
 tool	fix-dashboard-launchd	AUDIT-PASS	
 tool	n8n-health	AUDIT-PASS	
 tool	qa-gate	AUDIT-PASS	

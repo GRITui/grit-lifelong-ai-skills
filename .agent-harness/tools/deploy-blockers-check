@@ -1,0 +1,23 @@
+#!/bin/sh
+# deploy-blockers-check — c21 USER-action blocker probe  (pipeline T)
+# Codifies the hand-run c21 re-audit command set (19+ repeated re-audit
+# commits 09-16 02:30..07:40) into one deterministic probe.
+# Checks: CLAUDE_CODE_OAUTH_TOKEN repo secret, main branch-protection state,
+# cloudflared process, dashboard :8787.
+# Exit 0 = observable blockers cleared · 1 = blockers remain (listed on stdout).
+# Note: exit 1 is the EXPECTED state while c21 is BLOCKED-ON-USER.
+fail=0
+REPO=$(git remote get-url origin 2>/dev/null | sed -E 's#^https://github.com/##; s#\.git$##')
+[ -n "$REPO" ] || { echo "repo: FAIL (no origin remote)"; exit 1; }
+gh secret list 2>/dev/null | awk '{print $1}' | grep -qx 'CLAUDE_CODE_OAUTH_TOKEN' \
+  && echo "secret CLAUDE_CODE_OAUTH_TOKEN: present" \
+  || { echo "secret CLAUDE_CODE_OAUTH_TOKEN: ABSENT"; fail=1; }
+P=$(gh api "repos/$REPO/branches/main/protection" --jq \
+  '"enforce_admins=\(.enforce_admins.enabled) checks=\(.required_status_checks|length) pr=\(.pull_request_review_enforcement // "none") restrictions=\(.restrictions|length)"' 2>/dev/null)
+[ -n "$P" ] && echo "protection main: $P" || echo "protection main: unknown (api fail)"
+CF=$(pgrep -fl cloudflared | wc -l | tr -d ' ')
+[ "$CF" -ge 1 ] && echo "cloudflared: alive" || { echo "cloudflared: dead"; fail=1; }
+H=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://localhost:8787/)
+[ "$H" = "200" ] && echo "dashboard :8787: OK (200)" || { echo "dashboard :8787: FAIL ($H)"; fail=1; }
+[ $fail -eq 0 ] && echo "DEPLOY BLOCKERS: CLEARED"
+exit $fail
