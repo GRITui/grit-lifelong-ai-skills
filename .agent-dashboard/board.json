@@ -85,8 +85,8 @@
     },
     {
       "column" : "in-progress",
-      "title" : "Sprint 09-12 · USER action batch — BLOCKED-ON-USER, re-audits paused (09-16 08:00 re-check via tools/deploy-blockers-check: state unchanged — secret absent; protection enforce_admins=true checks=0 pr=none restrictions=0; cloudflared dead; :8787 200): REMAINING USER: gh secret set CLAUDE_CODE_OAUTH_TOKEN · approve resume→Hostinger deploy · domain decision for stable tunnel URL",
-   "updated" : "2026-09-16T01:00:00Z",
+      "title" : "Sprint 09-12 · USER action batch — BLOCKED-ON-USER (09-16 08:30 probe: state unchanged; re-audits paused): ONE-SHOT UNBLOCK brief ready → .agent-memory/inbox/2026-09-16-c21-unblock-brief.md — USER: (1) gh secret set CLAUDE_CODE_OAUTH_TOKEN (2) approve resume→Hostinger deploy (3) pick domain for stable tunnel (brief has options+commands)",
+      "updated" : "2026-09-16T01:30:00Z",
       "topic" : "automation-workflow",
       "id" : "c21"
     },
