@@ -1,6 +1,11 @@
 # c21 one-shot unblock brief (2026-09-16 08:30 +0700)
 
-Status probe (`.agent-harness/tools/deploy-blockers-check`, exit 1 = blocked) — re-audited 09-16 21:00:
+PO re-audit cadence (added 09-17 01:20): state was unchanged across 5 consecutive
+20-min waves (09-17 00:00–01:00). To stop churn on the public repo: re-audit at most
+every 2h; when the probe result is unchanged, do NOT commit a board bump — commit only
+on state change or a newly discovered blocker.
+
+Status probe (`.agent-harness/tools/deploy-blockers-check`, exit 1 = blocked) — re-audited 09-17 01:20:
 secret ABSENT · protection main enforce_admins=true checks=0 pr=none restrictions=0 ·
 cloudflared DEAD (misrouted quick tunnel KILLED by PO 09-16 21:00, §0 done) · dashboard :8787 200.
 
