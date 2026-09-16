@@ -21,9 +21,9 @@ from the domain decision in §3.)
 
 ## 1. Set the repo secret (unblocks the CI path)
 
-Verified 10:00 (repo-side): `.github/workflows/ai-qa-gate.yml:53` consumes
+Verified 09-17 00:30 (repo-side, re-check): `.github/workflows/ai-qa-gate.yml:53` consumes
 `secrets.CLAUDE_CODE_OAUTH_TOKEN`; `.github/ai-qa-gate-prompt.md`,
-`tools/qa-structure`, `tools/qa-gate` all present. Setting the secret is
+`.agent-harness/tools/qa-structure`, `.agent-harness/tools/qa-gate` all present. Setting the secret is
 sufficient for the CI path — no other repo-side change needed.
 
 Run from the repo root (sets a repo-level secret on `GRITui/grit-lifelong-ai-skills`):
