@@ -18,7 +18,7 @@
     }
   ],
   "version" : 1,
-  "updated" : "2026-09-16T15:30:00Z",
+  "updated" : "2026-09-16T16:00:00Z",
   "cards" : [
     {
       "title" : "Push scaffolding to origin (grit-lifelong-ai-skills)",
@@ -85,8 +85,8 @@
     },
     {
       "column" : "in-progress",
-      "title" : "Sprint 09-12 · USER action batch — BLOCKED-ON-USER (09-16 22:30 probe: state unchanged — secret ABSENT; protection ON main enforce_admins=true checks=0 pr=none restrictions=0; cloudflared dead; :8787 200): ONE-SHOT UNBLOCK brief → .agent-memory/inbox/2026-09-16-c21-unblock-brief.md — USER: (1) gh secret set CLAUDE_CODE_OAUTH_TOKEN (2) approve resume→Hostinger deploy (3) pick domain for stable tunnel (brief has options+commands)",
-  "updated" : "2026-09-16T15:30:00Z",
+      "title" : "Sprint 09-12 · USER action batch — BLOCKED-ON-USER (09-16 23:00 probe: state unchanged — secret ABSENT; protection ON main enforce_admins=true checks=0 pr=none restrictions=0; cloudflared dead; :8787 200): ONE-SHOT UNBLOCK brief → .agent-memory/inbox/2026-09-16-c21-unblock-brief.md — USER: (1) gh secret set CLAUDE_CODE_OAUTH_TOKEN (2) approve resume→Hostinger deploy (3) pick domain for stable tunnel (brief has options+commands)",
+  "updated" : "2026-09-16T16:00:00Z",
        "topic" : "automation-workflow",
        "id" : "c21"
     },
